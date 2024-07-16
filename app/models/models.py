@@ -8,3 +8,4 @@ class Patient(db.Model):
 
     def to_json(self):
         return {"id": self.id, "name": self.name, "age": self.age}
+

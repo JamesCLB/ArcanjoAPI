@@ -2,7 +2,7 @@ from flask import Flask
 from app.db import db
 from app.config import Config
 from flask_migrate import Migrate
-from views.patients import patients_bp
+from app.views.patients import patients_bp
 
 
 def create_app():
