@@ -1,8 +1,13 @@
 from flask import Blueprint, request
-from app.controllers.medics import get_all_medics, add_medic, delete_medic
+from app.controllers.medics import get_all_medics, add_medic, delete_medic, upd_medic, get_medic
 from app.db import db
 
 medics_bp = Blueprint("medics", __name__, url_prefix="/medics")
+
+
+@medics_bp.route("/<int:id_medic>", methods=["GET"])
+def get_medic_route(id_medic):
+    return get_medic(id_medic)
 
 
 @medics_bp.route("/", methods=["GET"])
@@ -22,3 +27,10 @@ def add_medic_route():
 def delete_medic_route(id_medic):
     session = db.session
     return delete_medic(id_medic, session)
+
+
+@medics_bp.route("/<int:id_medic>", methods=["PUT"])
+def put_medic_route(id_medic):
+    session = db.session
+    body = request.get_json()
+    return upd_medic(id_medic, body, session)

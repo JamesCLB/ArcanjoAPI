@@ -3,6 +3,16 @@ from app.controllers import make_response
 from flask import jsonify
 
 
+def get_patient(id_patient):
+    try:
+        patient_obj = Patient.query.filter_by(id=id_patient).first()
+
+        return patient_obj.to_json()
+    except Exception as e:
+        print(e)
+        return make_response(400, "patient", {}, "error to get patient")
+
+
 def add_patient(body, session):
     try:
         if "name" not in body or body["name"].strip() == "":

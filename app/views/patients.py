@@ -1,9 +1,14 @@
 from flask import request, Blueprint
 
-from app.controllers.patients import add_patient, get_all_patients, upd_patient, delete_patient
+from app.controllers.patients import add_patient, get_all_patients, upd_patient, delete_patient, get_patient
 from app.db import db
 
 patients_bp = Blueprint("patients", __name__, url_prefix="/patients")
+
+
+@patients_bp.route("/<int:id_patient>", methods=["GET"])
+def get_patient_route(id_patient):
+    return get_patient(id_patient)
 
 
 @patients_bp.route("/", methods=["POST"])

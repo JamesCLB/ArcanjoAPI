@@ -3,6 +3,12 @@ from flask import jsonify
 from app.controllers import make_response
 
 
+def get_medic(id_medic):
+    medic_obj = Medic.query.filter_by(id=id_medic).first()
+
+    return medic_obj.to_json()
+
+
 def get_all_medics():
     medics_obj = Medic.query.all()
     medics_json = [medic.to_json() for medic in medics_obj]
@@ -41,3 +47,21 @@ def delete_medic(id_medic, session):
     except Exception as e:
         print(e)
         return make_response(400, "medic", {}, "error to delete patient")
+
+
+def upd_medic(id_medic, body, session):
+    try:
+        medic_obj = Medic.query.filter_by(id=id_medic).first()
+        if "name" in body:
+            medic_obj.name = body["name"]
+        if "specialty" in body:
+            medic_obj.specialty = body["specialty"]
+        if "crm" in body:
+            medic_obj.crm = body["crm"]
+
+        session.commit()
+
+        return make_response(200, "medic", medic_obj.to_json(), "medic")
+    except Exception as e:
+        print(e)
+        return make_response(200, "medic", {}, "error to update the medic")
