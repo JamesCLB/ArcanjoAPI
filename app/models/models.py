@@ -17,4 +17,4 @@ class Medic(db.Model):
     crm = db.Column(db.String(4), nullable=False)
 
     def to_json(self):
-        return {"name": self.name, "specialty": self.specialty, "crm": self.crm}
+        return {"id": self.id, "name": self.name, "specialty": self.specialty, "crm": self.crm}
