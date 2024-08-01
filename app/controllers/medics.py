@@ -61,7 +61,7 @@ def upd_medic(id_medic, body, session):
 
         session.commit()
 
-        return make_response(200, "medic", medic_obj.to_json(), "medic")
+        return make_response(200, "medic", medic_obj.to_json(), "medic updated")
     except Exception as e:
         print(e)
         return make_response(200, "medic", {}, "error to update the medic")
