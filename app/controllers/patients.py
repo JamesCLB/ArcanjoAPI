@@ -1,4 +1,6 @@
 from app.models.models import Patient
+from jsonschema import validate, ValidationError
+from app.schemas import patient_schema_post
 from app.controllers import make_response
 from flask import jsonify
 
@@ -26,8 +28,7 @@ def add_patient(body, session):
         session.add(new_patient)
         session.commit()
 
-        return make_response(201, "patient", new_patient.to_json(), "patient added")
-
+        return make_response(201, "patient", new_patient.to_json(), "patient added successfully")
     except Exception as e:
         print(e)
         return make_response(400, "patient", {}, "error to add the patient")
@@ -69,7 +70,7 @@ def delete_patient(session, patient_id):
         session.delete(patient_obj)
         session.commit()
 
-        return make_response(200, "patient", patient_obj.to_json(), f"patient {patient_obj.name} deleted")
+        return make_response(200, "patient", patient_obj.to_json(), f"patient {patient_obj.name} deleted successfully")
     except Exception as e:
         print(e)
         return make_response(400, "patient", {}, "error to delete patient")

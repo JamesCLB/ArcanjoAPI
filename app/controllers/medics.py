@@ -30,7 +30,7 @@ def add_medic(body, session):
         session.add(new_medic)
         session.commit()
 
-        return make_response(200, "medic", {}, "medic added")
+        return make_response(200, "medic", {}, "medic added successfully")
     except Exception as e:
         print(e)
         return make_response(400, "medic", {}, "error to add the medic")
@@ -43,7 +43,7 @@ def delete_medic(id_medic, session):
         session.delete(medic_obj)
         session.commit()
 
-        return make_response(200, "medic", {}, "medic deleted")
+        return make_response(200, "medic", {}, "medic deleted successfully")
     except Exception as e:
         print(e)
         return make_response(400, "medic", {}, "error to delete patient")
@@ -61,7 +61,7 @@ def upd_medic(id_medic, body, session):
 
         session.commit()
 
-        return make_response(200, "medic", medic_obj.to_json(), "medic updated")
+        return make_response(200, "medic", medic_obj.to_json(), "medic updated successfully")
     except Exception as e:
         print(e)
         return make_response(200, "medic", {}, "error to update the medic")

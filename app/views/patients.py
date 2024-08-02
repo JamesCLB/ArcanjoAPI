@@ -1,5 +1,6 @@
 from flask import request, Blueprint
-
+from app.controllers import validate_json
+from app.schemas import patient_schema_post
 from app.controllers.patients import add_patient, get_all_patients, upd_patient, delete_patient, get_patient
 from app.db import db
 
@@ -12,6 +13,7 @@ def get_patient_route(id_patient):
 
 
 @patients_bp.route("/", methods=["POST"])
+@validate_json(patient_schema_post)
 def add_patient_route():
     body = request.get_json()
     session = db.session

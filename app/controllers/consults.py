@@ -49,7 +49,7 @@ def add_consult(body, session, id_medic, id_patient):
         session.add(new_consult)
         session.commit()
 
-        return make_response(201, "consult", new_consult.to_json(), "oi")
+        return make_response(201, "consult", new_consult.to_json(), "consult added successfully")
     except Exception as e:
         print(e)
         return make_response(400, "medic", {}, "error to add consultation")
