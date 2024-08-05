@@ -41,10 +41,12 @@ def add_consult(body, session, id_medic, id_patient):
 
         notes = body.get("notes", "")
 
-        new_consult = Consultation(patient_id=id_patient,
-                                   medic_id=id_medic,
-                                   consult_time=consult_datetime,
-                                   notes=notes)
+        new_consult = Consultation(
+            patient_id=id_patient,
+            medic_id=id_medic,
+            consult_time=consult_datetime,
+            notes=notes
+            )
 
         session.add(new_consult)
         session.commit()
@@ -71,9 +73,31 @@ def delete_consult(id_consult, session):
 def upd_consult(id_consult, session, body):
     try:
         consult_obj = session.query(Consultation).filter(Consultation.id == id_consult).first()
+        if 'consultation_date' in body and 'consultation_time' in body:
+            consult_datetime = f"{body['consultation_date']} {body['consultation_time']}"
+            new_date = datetime.strptime(consult_datetime, "%d/%m/%Y %H:%M")
+            consult_obj.consult_time = new_date
 
-        if "consult_time" in body and body["consult_time"].strip() != "":
-            consult_obj.consult_time = body["consult_time"]
+        if "consultation_time" in body and "consultation_date" not in body:
+            datetime_obj = consult_obj.consult_time
+
+            date_str = datetime_obj.strftime("%Y-%m-%d")
+
+            new_date = f"{date_str} {body["consultation_time"]}"
+            new_date = datetime.strptime(new_date, "%Y-%m-%d %H:%M")
+
+            consult_obj.consult_time = new_date
+
+        elif "consultation_date" in body and "consultation_time" not in body:
+            datetime_obj = consult_obj.consult_time
+
+            time_str = datetime_obj.strftime("%H:%M")
+
+            new_date = f"{body["consultation_date"]} {time_str}"
+            new_date = datetime.strptime(new_date, "%d/%m/%Y %H:%M")
+
+            consult_obj.consult_time = new_date
+
         if "notes" in body and body["notes"].strip() != "":
             consult_obj.notes = body["notes"]
 

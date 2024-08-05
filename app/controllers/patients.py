@@ -1,6 +1,4 @@
 from app.models.models import Patient
-from jsonschema import validate, ValidationError
-from app.schemas import patient_schema_post
 from app.controllers import make_response
 from flask import jsonify
 

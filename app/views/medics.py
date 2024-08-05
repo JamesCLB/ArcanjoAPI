@@ -1,5 +1,7 @@
 from flask import Blueprint, request
 from app.controllers.medics import get_all_medics, add_medic, delete_medic, upd_medic, get_medic
+from app.controllers import validate_json
+from app.schemas import medics_schema_post, medics_schema_put
 from app.db import db
 
 medics_bp = Blueprint("medics", __name__, url_prefix="/medics")
@@ -16,6 +18,7 @@ def get_medics_route():
 
 
 @medics_bp.route("/", methods=["POST"])
+@validate_json(medics_schema_post)
 def add_medic_route():
     body = request.get_json()
     session = db.session
@@ -30,6 +33,7 @@ def delete_medic_route(id_medic):
 
 
 @medics_bp.route("/<int:id_medic>", methods=["PUT"])
+@validate_json(medics_schema_put)
 def put_medic_route(id_medic):
     session = db.session
     body = request.get_json()
