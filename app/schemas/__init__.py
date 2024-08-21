@@ -14,8 +14,13 @@ patient_schema_put = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "type": "object",
     "properties": {
-        "name": {"type": "string"},
-        "age": {"type": "integer"}
+        "name": {"type": "string",
+                 "minLength": 1,
+                 "pattern": "^[^\\s]"
+                 },
+        "age": {"type": "integer",
+                "minimum": 0,
+                "pattern": "^[^\\s]"}
     },
     "additionalProperties": False
 }
@@ -25,8 +30,8 @@ medics_schema_post = {
     "type": "object",
     "properties": {
         "id": {"type": "integer"},
-        "name": {"type": "string"},
-        "crm": {"type": "string", "minLength": 4},
+        "name": {"type": "string", "pattern": "^[\\S]"},
+        "crm": {"type": "string", "minLength": 4, "pattern": "\\d{4}"},
         "specialty": {"type": "string"}
     },
     "required": ["name", "crm", "specialty"],
@@ -85,7 +90,12 @@ consultation_schema_put = {
         "notes": {
             "type": "string",
             "maxLength": 500,
-            "description": "notes about consultation (optional)"
+            "description": "notes about consultation (optional)",
+            "pattern": "^[^\\s]"
+        },
+        "medic_id": {
+            "type": "integer",
+            "description": "medic associated at consult"
         }
     },
     "required": [],
