@@ -9,6 +9,7 @@ class Patient(db.Model):
     age = db.Column(db.Integer, nullable=False)
     email = db.Column(db.String(100), nullable=False, unique=True)
     password_hash = db.Column(db.String(256), nullable=False)
+    role = db.Column(db.String(50), default="patient")
 
     def to_json(self):
         return {
@@ -26,7 +27,7 @@ class Medic(db.Model):
     crm = db.Column(db.String(4), nullable=False, unique=True)
     email = db.Column(db.String(100), nullable=False, unique=True)
     password_hash = db.Column(db.String(256), nullable=False)
-
+    role = db.Column(db.String(50), default="medic")
 
     def to_json(self):
         return {
