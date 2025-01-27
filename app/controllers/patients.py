@@ -1,74 +1,79 @@
 from app.models.models import Patient
 from app.controllers import make_response
 from flask import jsonify
+from app.exceptions import ValidationError, NotFoundError
 
 
 def get_patient(id_patient):
-    try:
-        patient_obj = Patient.query.filter_by(id=id_patient).first()
+    patient_obj = Patient.query.filter_by(id=id_patient).first()
+    if not patient_obj:
+        raise NotFoundError("patient not found")
 
-        return patient_obj.to_json()
-    except Exception as e:
-        print(e)
-        return make_response(400, "patient", {}, "error to get patient")
+    return {
+        "status_code": 200,
+        "content_name": "patient",
+        "content": patient_obj.to_json(),
+        "msg": "patient returned successfully"
+    }
 
 
 def add_patient(body, session):
-    try:
-        if "name" not in body or body["name"].strip() == "":
-            return make_response(400, "patient", {}, "patient name required")
-        name = body["name"]
-        if "age" not in body:
-            return make_response(400, "patient", {}, "patient age required")
-        age = body["age"]
+    name = body["name"]
+    age = body["age"]
+    new_patient = Patient(name=name, age=age)
+    session.add(new_patient)
+    session.commit()
 
-        new_patient = Patient(name=name, age=age)
-        session.add(new_patient)
-        session.commit()
-
-        return make_response(201, "patient", new_patient.to_json(), "patient added successfully")
-    except Exception as e:
-        print(e)
-        return make_response(400, "patient", {}, "error to add the patient")
+    return {
+        'status': 201,
+        'name_content': "patient",
+        'content': new_patient.to_json(),
+        'msg': 'Patient added successfully'
+    }
 
 
 def get_all_patients():
     patients_objs = Patient.query.all()
     patients_json = [patient.to_json() for patient in patients_objs]
 
-    return jsonify(patients_json)
+    return {
+        "status_code": 200,
+        "content_name": "patients",
+        "content": patients_json,
+        "msg": "patients returned successfully"
+    }
 
 
 def upd_patient(body, patient_id, session):
-    try:
-        patient_obj = Patient.query.filter_by(id=patient_id).first()
-        previous_patient = []
-        mod = []
-        if "name" in body and body["name"].strip() != "":
-            previous_patient.append(patient_obj.name)
-            patient_obj.name = body["name"]
-            mod.append(body["name"])
-        if "age" in body and body["age"] > 0:
-            previous_patient.append(patient_obj.age)
-            patient_obj.age = body["age"]
-            mod.append(body["age"])
-        session.commit()
+    patient_obj = Patient.query.filter_by(id=patient_id).first()
+    if not patient_obj:
+        raise NotFoundError("Patient not found")
+    if "name" in body:
+        patient_obj.name = body["name"]
+    if "age" in body:
+        patient_obj.age = body["age"]
+    session.commit()
 
-        return make_response(200, "patient", patient_obj, f"patient updated. Previous: {previous_patient} After: {mod}")
-
-    except Exception as e:
-        print(e)
-        return make_response(400, "patient", {}, f"error to update the patient: {e}")
+    return {
+        "status": 200,
+        "name_content": "patient",
+        "content": patient_obj.to_json(),
+        "msg": "Patient updated successfully"
+    }
 
 
 def delete_patient(session, patient_id):
-    try:
-        patient_obj = Patient.query.filter_by(id=patient_id).first()
+    patient_obj = Patient.query.filter_by(id=patient_id).first()
+    if not patient_obj:
+        raise NotFoundError("patient not found")
 
-        session.delete(patient_obj)
-        session.commit()
+    session.delete(patient_obj)
 
-        return make_response(200, "patient", patient_obj.to_json(), f"patient {patient_obj.name} deleted successfully")
-    except Exception as e:
-        print(e)
-        return make_response(400, "patient", {}, "error to delete patient")
+    session.commit()
+
+    return {
+        "status_code": 200,
+        "content_name": "patient",
+        "content": patient_obj.to_json(),
+        "msg": "patient deleted successfully"
+    }

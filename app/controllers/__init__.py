@@ -17,7 +17,9 @@ def validate_json(schema):
                 print(e)
                 return make_response(400, "exception", {}, "Invalid data format")
             return f(*args, **kwargs)
+
         return decorated_function
+
     return decorator
 
 

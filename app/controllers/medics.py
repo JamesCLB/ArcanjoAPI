@@ -1,67 +1,123 @@
-from app.models.models import Medic
-from flask import jsonify
-from app.controllers import make_response
+from app.models.models import Medic, Consultation
+from app.exceptions import NotFoundError, ConflictError, ValidationError
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_jwt_extended import create_access_token
+
+
+def login_medic(body):
+    password = body.get("password")
+    email = body.get("email")
+    if not password or not email:
+        raise ValidationError("Email and password required")
+
+    medic = Medic.query.filter_by(email=email).first()
+    if not medic:
+        raise NotFoundError("Medic not found")
+
+    if not check_password_hash(medic.password_hash, password):
+        raise ValidationError(f"Invalid credentials")
+
+    token_jwt = create_access_token(identity={"id": medic.id, "role": "medic"})
+
+    return {
+        "status_code": 200,
+        "content_name": "access_token",
+        "content": token_jwt,
+        "msg": "login successfully"
+    }
 
 
 def get_medic(id_medic):
     medic_obj = Medic.query.filter_by(id=id_medic).first()
+    if not medic_obj:
+        raise NotFoundError("Medic not found")
 
-    return medic_obj.to_json()
+    return {
+        "status_code": 200,
+        "name_content": "medic",
+        "content": medic_obj.to_json(),
+        "msg": "medic returned successfully"
+    }
 
 
 def get_all_medics():
     medics_obj = Medic.query.all()
     medics_json = [medic.to_json() for medic in medics_obj]
 
-    return jsonify(medics_json)
+    return {
+        "status_code": 200,
+        "content_name": "medic",
+        "content": medics_json,
+        "msg": "medics returned successfully"
+    }
 
 
 def add_medic(body, session):
-    try:
-        if "name" not in body or body["name"].strip() == "":
-            return make_response(400, "medic", {}, "medic name required")
-        if "specialty" not in body or body["specialty"].strip() == "":
-            return make_response(400, "medic", {}, "medic specialty required")
-        if "crm" not in body or body["crm"].strip() == "":
-            return make_response(400, "medic", {}, "medic crm required")
+    if Medic.query.filter_by(crm=body["crm"]).first():
+        raise ConflictError(f"medic with crm {body["crm"]} already exist")
 
-        new_medic = Medic(name=body["name"], specialty=body["specialty"], crm=body["crm"])
+    password_hash = generate_password_hash(body["password"])
+    del body["password"]
 
-        session.add(new_medic)
-        session.commit()
+    new_medic = Medic(
+        name=body["name"],
+        specialty=body["specialty"],
+        crm=body["crm"],
+        email=body["email"],
+        password_hash=password_hash)
 
-        return make_response(200, "medic", {}, "medic added successfully")
-    except Exception as e:
-        print(e)
-        return make_response(400, "medic", {}, "error to add the medic")
+    session.add(new_medic)
+    session.commit()
+
+    return {
+        "status_code": 201,
+        "content_name": "medic",
+        "content": new_medic.to_json(),
+        "msg": "medic added successfully"
+    }
 
 
-def delete_medic(id_medic, session):
-    try:
-        medic_obj = Medic.query.filter_by(id=id_medic).first()
+def delete_medic(medic_id, session):
+    medic_obj = Medic.query.filter_by(id=medic_id).first()
 
-        session.delete(medic_obj)
-        session.commit()
+    if not medic_obj:
+        raise NotFoundError("medic not found")
 
-        return make_response(200, "medic", {}, "medic deleted successfully")
-    except Exception as e:
-        print(e)
-        return make_response(400, "medic", {}, "error to delete patient")
+    if len(Consultation.query.filter_by(medic_id=medic_id).all()) > 0:
+        raise ConflictError(f"medic with id {medic_id} have associated consultations")
+
+    session.delete(medic_obj)
+    session.commit()
+
+    return {
+        "status_code": 200,
+        "name_content": "medic",
+        "content": medic_obj.to_json(),
+        "msg": "medic deleted successfully"
+    }
 
 
 def upd_medic(id_medic, body, session):
-    try:
-        medic_obj = Medic.query.filter_by(id=id_medic).first()
-        if "name" in body:
-            medic_obj.name = body["name"]
-        if "specialty" in body:
-            medic_obj.specialty = body["specialty"]
-        if "crm" in body:
-            medic_obj.crm = body["crm"]
+    medic_obj = Medic.query.filter_by(id=id_medic).first()
+    if not medic_obj:
+        return {
+            "status_code": 404,
+            "msg": "Medic not found"
+        }
 
-        session.commit()
+    if "name" in body:
+        medic_obj.name = body["name"]
+    if "specialty" in body:
+        medic_obj.specialty = body["specialty"]
+    if "crm" in body:
+        medic_obj.crm = body["crm"]
 
-        return make_response(200, "medic", medic_obj.to_json(), "medic updated successfully")
-    except Exception as e:
-        print(e)
-        return make_response(200, "medic", {}, "error to update the medic")
+    session.commit()
+
+    return {
+        "status_code": 200,
+        "content_name": "medic",
+        "content": medic_obj.to_json(),
+        "msg": f"Medic updated successfully."
+    }
+

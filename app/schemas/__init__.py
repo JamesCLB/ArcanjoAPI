@@ -4,10 +4,16 @@ patient_schema_post = {
     "properties": {
         "id": {"type": "integer"},
         "name": {"type": "string"},
-        "age": {"type": "integer"}
+        "age": {"type": "integer"},
+        "email": {"type": "string",
+                  "format": "email",
+                  "pattern": "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$"},
+        "password": {"type": "string",
+                     "minLength": 8,
+                     "pattern": "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$"}
     },
-    "required": ["age", "name"],
-    "additionalProperties": False
+    "required": ["age", "name", "email", "password"],
+    "additionalProperties": True
 }
 
 patient_schema_put = {
@@ -22,7 +28,7 @@ patient_schema_put = {
                 "minimum": 0,
                 "pattern": "^[^\\s]"}
     },
-    "additionalProperties": False
+    "additionalProperties": True
 }
 
 medics_schema_post = {
@@ -32,19 +38,25 @@ medics_schema_post = {
         "id": {"type": "integer"},
         "name": {"type": "string", "pattern": "^[\\S]"},
         "crm": {"type": "string", "minLength": 4, "pattern": "\\d{4}"},
-        "specialty": {"type": "string"}
+        "specialty": {"type": "string", "pattern": "^[^\\s]"},
+        "email": {"type": "string",
+                  "format": "email",
+                  "pattern": "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$"},
+        "password": {"type": "string",
+                     "minLength": 8,
+                     "pattern": "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$"}
     },
-    "required": ["name", "crm", "specialty"],
-    "additionalProperties": False
+    "required": ["name", "crm", "specialty", "email", "password"],
+    "additionalProperties": True
 }
 
 medics_schema_put = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "type": "object",
     "properties": {
-        "name": {"type": "string"},
+        "name": {"type": "string", "pattern": "^[\\S]"},
         "crm": {"type": "string", "minLength": 4},
-        "specialty": {"type": "string"}
+        "specialty": {"type": "string", "pattern": "^[^\\s]"}
     },
     "additionalProperties": False
 }

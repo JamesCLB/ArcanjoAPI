@@ -7,9 +7,15 @@ class Patient(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(40), nullable=False)
     age = db.Column(db.Integer, nullable=False)
+    email = db.Column(db.String(100), nullable=False, unique=True)
+    password_hash = db.Column(db.String(256), nullable=False)
 
     def to_json(self):
-        return {"id": self.id, "name": self.name, "age": self.age}
+        return {
+            "id": self.id,
+            "name": self.name,
+            "age": self.age,
+            "email": self.email}
 
 
 class Medic(db.Model):
@@ -17,10 +23,18 @@ class Medic(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(40), nullable=False)
     specialty = db.Column(db.String(40), nullable=False)
-    crm = db.Column(db.String(4), nullable=False)
+    crm = db.Column(db.String(4), nullable=False, unique=True)
+    email = db.Column(db.String(100), nullable=False, unique=True)
+    password_hash = db.Column(db.String(256), nullable=False)
+
 
     def to_json(self):
-        return {"id": self.id, "name": self.name, "specialty": self.specialty, "crm": self.crm}
+        return {
+            "id": self.id,
+            "name": self.name,
+            "specialty": self.specialty,
+            "crm": self.crm,
+            "email": self.email}
 
 
 class Consultation(db.Model):

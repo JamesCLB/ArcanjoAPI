@@ -5,6 +5,7 @@ from flask_migrate import Migrate
 from app.views.patients import patients_bp
 from app.views.medics import medics_bp
 from app.views.consults import consult_bp
+from flask_jwt_extended import JWTManager
 
 
 def create_app():
@@ -16,5 +17,6 @@ def create_app():
 
     db.init_app(app)
     migrate = Migrate(app, db)
+    jwt = JWTManager(app)
 
     return app
