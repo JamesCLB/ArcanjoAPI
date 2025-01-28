@@ -20,7 +20,10 @@ def user_lookup_callback(_jwt_header, jwt_data):
     return None
 
 
-def check_acess(roles: [str] = []):
+def check_access(roles=None):
+    if roles is None:
+        roles = []
+
     def decorator(f):
         @wraps(f)
         def decorator_function(*args, **kwargs):
