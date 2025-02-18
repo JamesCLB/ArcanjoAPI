@@ -9,11 +9,11 @@ def login_medic(body):
     email = body.get("email")
     if not password or not email:
         raise ValidationError("Email and password required")
-
+    print(password)
     medic = Medic.query.filter_by(email=email).first()
     if not medic:
         raise NotFoundError("Medic not found")
-
+    print(medic)
     if not check_password_hash(medic.password_hash, password):
         raise ValidationError(f"Invalid credentials")
 

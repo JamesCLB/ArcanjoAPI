@@ -1,8 +1,8 @@
 from flask import request, Blueprint
-from app.controllers import validate_json, make_response
+from app.utils import validate_json, make_response
 from app.schemas import patient_schema_post, patient_schema_put
 from app.controllers.patients import add_patient, get_all_patients, upd_patient, delete_patient, get_patient
-from app.db import db
+from app.core.db import db
 from app.exceptions import ValidationError, NotFoundError
 from flask_jwt_extended import jwt_required
 

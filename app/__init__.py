@@ -5,7 +5,7 @@ from flask_migrate import Migrate
 from app.views.patients import patients_bp
 from app.views.medics import medics_bp
 from app.views.consults import consult_bp
-from core.auth import jwt
+from app.core.auth import jwt
 
 
 def create_app():

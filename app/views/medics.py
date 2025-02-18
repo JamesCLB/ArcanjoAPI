@@ -1,10 +1,11 @@
 from flask import Blueprint, request
 from app.controllers.medics import get_all_medics, add_medic, delete_medic, upd_medic, get_medic, login_medic
-from app.controllers import validate_json, make_response
+from app.utils import validate_json, make_response
 from app.schemas import medics_schema_post, medics_schema_put
-from app.db import db
+from app.core.db import db
 from app.exceptions import NotFoundError, ConflictError, ValidationError
 from flask_jwt_extended import jwt_required
+from app.core.auth import check_access
 
 medics_bp = Blueprint("medics", __name__, url_prefix="/medics")
 
@@ -59,6 +60,7 @@ def get_medics_route():
 
 
 @medics_bp.route("/", methods=["POST"])
+@check_access(["admin"])
 @validate_json(medics_schema_post)
 def add_medic_route():
     try:

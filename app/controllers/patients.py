@@ -1,7 +1,5 @@
 from app.models.models import Patient
-from app.controllers import make_response
-from flask import jsonify
-from app.exceptions import ValidationError, NotFoundError
+from app.exceptions import NotFoundError
 
 
 def get_patient(id_patient):

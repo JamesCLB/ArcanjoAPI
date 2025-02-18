@@ -1,9 +1,9 @@
 from flask import Blueprint, request
-from app.db import db
+from app.core.db import db
 from app.controllers.consults import add_consult, get_consults, delete_consult, upd_consult, get_consult
-from app.controllers import validate_json
+from app.utils import validate_json
 from app.schemas import consultation_schema_post, consultation_schema_put
-from app.controllers import make_response
+from app.utils import make_response
 from app.exceptions import NotFoundError
 
 consult_bp = Blueprint("consults", __name__, url_prefix="/consults")

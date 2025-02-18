@@ -1,7 +1,6 @@
 from datetime import datetime
-from app.controllers import make_response
 from app.models.models import Consultation, Medic, Patient
-from app.db import db
+from app.core.db import db
 from app.exceptions import NotFoundError
 
 
