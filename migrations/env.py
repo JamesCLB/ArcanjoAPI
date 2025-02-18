@@ -1,7 +1,8 @@
 import logging
 from logging.config import fileConfig
+
 from flask import current_app
-from app.models.models import Patient
+
 from alembic import context
 
 # this is the Alembic Config object, which provides
