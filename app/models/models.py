@@ -1,7 +1,7 @@
 from app.core.db import db
 from datetime import date
 from sqlalchemy.dialects.postgresql import ARRAY
-
+from sqlalchemy import text
 
 class Patient(db.Model):
     __tablename__ = "patient"
@@ -29,7 +29,7 @@ class Medic(db.Model):
     crm = db.Column(db.String(4), nullable=False, unique=True)
     email = db.Column(db.String(100), nullable=False, unique=True)
     password_hash = db.Column(db.String(256), nullable=False)
-    role = db.Column(ARRAY(db.String), server_default="{'medic'}")
+    role = db.Column(ARRAY(db.Text), server_default=text("ARRAY['medic']"))
 
     def to_json(self):
         return {
@@ -38,7 +38,7 @@ class Medic(db.Model):
             "specialty": self.specialty,
             "crm": self.crm,
             "email": self.email,
-            "roles": self.roles}
+            "roles": self.role}
 
 
 class Consultation(db.Model):
