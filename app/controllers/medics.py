@@ -9,34 +9,32 @@ def login_medic(body):
     email = body.get("email")
     if not password or not email:
         raise ValidationError("Email and password required")
-    print(password)
     medic = Medic.query.filter_by(email=email).first()
     if not medic:
-        raise NotFoundError("Medic not found")
-    print(medic)
+        raise NotFoundError("Medic with email not found")
     if not check_password_hash(medic.password_hash, password):
         raise ValidationError(f"Invalid credentials")
-
-    token_jwt = create_access_token(identity={"id": medic.id, "role": "medic"})
+    print({"id": medic.id, "role": medic.role})
+    token_jwt = create_access_token(identity={"id": medic.id, "role": medic.role})
 
     return {
         "status_code": 200,
         "content_name": "access_token",
         "content": token_jwt,
-        "msg": "login successfully"
+        "msg": "Login successfully"
     }
 
 
 def get_medic(id_medic):
     medic_obj = Medic.query.filter_by(id=id_medic).first()
     if not medic_obj:
-        raise NotFoundError("Medic not found")
+        raise NotFoundError(f"Medic with ID {id_medic} not found")
 
     return {
         "status_code": 200,
         "name_content": "medic",
         "content": medic_obj.to_json(),
-        "msg": "medic returned successfully"
+        "msg": "Medic returned successfully"
     }
 
 
@@ -48,13 +46,13 @@ def get_all_medics():
         "status_code": 200,
         "content_name": "medic",
         "content": medics_json,
-        "msg": "medics returned successfully"
+        "msg": "Medics returned successfully"
     }
 
 
 def add_medic(body, session):
     if Medic.query.filter_by(crm=body["crm"]).first():
-        raise ConflictError(f"medic with crm {body["crm"]} already exist")
+        raise ConflictError(f"Medic with CRM {body["crm"]} already exist")
 
     password_hash = generate_password_hash(body["password"])
     del body["password"]
@@ -64,16 +62,17 @@ def add_medic(body, session):
         specialty=body["specialty"],
         crm=body["crm"],
         email=body["email"],
-        password_hash=password_hash)
+        password_hash=password_hash,
+        role=body["roles"])
 
     session.add(new_medic)
     session.commit()
 
     return {
         "status_code": 201,
-        "content_name": "medic",
+        "content_name": "Medic",
         "content": new_medic.to_json(),
-        "msg": "medic added successfully"
+        "msg": "Medic added successfully"
     }
 
 
@@ -81,29 +80,26 @@ def delete_medic(medic_id, session):
     medic_obj = Medic.query.filter_by(id=medic_id).first()
 
     if not medic_obj:
-        raise NotFoundError("medic not found")
+        raise NotFoundError(f"Medic with ID {medic_id} not found")
 
     if len(Consultation.query.filter_by(medic_id=medic_id).all()) > 0:
-        raise ConflictError(f"medic with id {medic_id} have associated consultations")
+        raise ConflictError(f"Medic with ID {medic_id} have associated consultations")
 
     session.delete(medic_obj)
     session.commit()
 
     return {
         "status_code": 200,
-        "name_content": "medic",
+        "name_content": "Medic",
         "content": medic_obj.to_json(),
-        "msg": "medic deleted successfully"
+        "msg": "Medic deleted successfully"
     }
 
 
 def upd_medic(id_medic, body, session):
     medic_obj = Medic.query.filter_by(id=id_medic).first()
     if not medic_obj:
-        return {
-            "status_code": 404,
-            "msg": "Medic not found"
-        }
+        raise NotFoundError(f"Medic with ID {id_medic} not found")
 
     if "name" in body:
         medic_obj.name = body["name"]
@@ -116,7 +112,7 @@ def upd_medic(id_medic, body, session):
 
     return {
         "status_code": 200,
-        "content_name": "medic",
+        "content_name": "Medic",
         "content": medic_obj.to_json(),
         "msg": f"Medic updated successfully."
     }

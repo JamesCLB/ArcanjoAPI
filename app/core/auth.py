@@ -10,19 +10,18 @@ jwt = JWTManager()
 @jwt.user_lookup_loader
 def user_lookup_callback(_jwt_header, jwt_data):
     identity = jwt_data["sub"]
-
-    if identity["role"] == "medic":
+    if "medic" in identity["role"]:
         return Medic.query.filter_by(id=identity["id"]).first()
 
-    elif identity["role"] == "patient":
+    elif "patient" in ["role"]:
         return Patient.query.filter_by(id=identity["id"]).first()
 
     return None
 
 
-def check_access(roles=None):
-    if roles is None:
-        roles = []
+def check_access(acess_roles=None):
+    if acess_roles is None:
+        acess_roles = []
 
     def decorator(f):
         @wraps(f)
@@ -30,8 +29,7 @@ def check_access(roles=None):
             verify_jwt_in_request()
 
             current_user = get_current_user()
-
-            if current_user.role not in roles:
+            if not any(role in acess_roles for role in current_user.role):
                 raise AuthorizationError("Role is not allowed")
 
             return f(*args, **kwargs)

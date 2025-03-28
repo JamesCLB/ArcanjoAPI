@@ -26,7 +26,7 @@ def add_patient(body, session):
         'status': 201,
         'name_content': "patient",
         'content': new_patient.to_json(),
-        'msg': 'Patient added successfully'
+        'msg': 'patient added successfully'
     }
 
 
@@ -56,7 +56,7 @@ def upd_patient(body, patient_id, session):
         "status": 200,
         "name_content": "patient",
         "content": patient_obj.to_json(),
-        "msg": "Patient updated successfully"
+        "msg": "patient updated successfully"
     }
 
 
