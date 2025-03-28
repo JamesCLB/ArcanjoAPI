@@ -31,7 +31,20 @@ patient_schema_put = {
     "additionalProperties": True
 }
 
-medics_schema_post = {
+medics_schema_login = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+        "email": {"type": "string",
+                  "format": "email",
+                  "pattern": "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$"},
+        "password": {"type": "string",
+                     "minLength": 8,
+                     "pattern": "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$"}
+    },
+    "required": ["email", "password"]
+}
+medics_schema_add = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "type": "object",
     "properties": {
@@ -44,9 +57,13 @@ medics_schema_post = {
                   "pattern": "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$"},
         "password": {"type": "string",
                      "minLength": 8,
-                     "pattern": "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$"}
+                     "pattern": "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$"},
+        "roles": {"type": "array",
+                  "minItems": 1,
+                  "items": {"type": "string", "minLength": 1},
+                  "default": ["medic"]}
     },
-    "required": ["name", "crm", "specialty", "email", "password"],
+    "required": ["name", "crm", "specialty", "email", "password", "roles"],
     "additionalProperties": True
 }
 
