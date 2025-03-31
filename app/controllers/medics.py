@@ -54,6 +54,9 @@ def add_medic(body, session):
     if Medic.query.filter_by(crm=body["crm"]).first():
         raise ConflictError(f"Medic with CRM {body["crm"]} already exist")
 
+    if Medic.query.filter_by(email=body["email"]).first():
+        raise ConflictError(f"Medic with email {body["email"]} already exist")
+
     password_hash = generate_password_hash(body["password"])
     del body["password"]
 
