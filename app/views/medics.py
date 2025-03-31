@@ -98,6 +98,7 @@ def delete_medic_route(id_medic):
 
 @medics_bp.route("/<int:id_medic>", methods=["PUT"])
 @jwt_required()
+@check_access("admin")
 @validate_json(medics_schema_put)
 def put_medic_route(id_medic):
     session = db.session
