@@ -3,14 +3,16 @@ from datetime import date
 from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy import text
 
+
 class Patient(db.Model):
     __tablename__ = "patient"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(40), nullable=False)
     age = db.Column(db.Integer, nullable=False)
+    cpf = db.Column(db.String(11), nullable=False, unique=True)
     email = db.Column(db.String(100), nullable=False, unique=True)
     password_hash = db.Column(db.String(256), nullable=False)
-    role = db.Column(ARRAY(db.String), server_default="{'patient'}")
+    role = db.Column(ARRAY(db.Text), server_default=text("ARRAY['patient']"))
 
     def to_json(self):
         return {

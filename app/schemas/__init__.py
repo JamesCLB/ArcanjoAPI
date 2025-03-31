@@ -5,6 +5,8 @@ patient_schema_post = {
         "id": {"type": "integer"},
         "name": {"type": "string"},
         "age": {"type": "integer"},
+        "cpf": {"type": "string",
+                "pattern": "^[0-9]{11}$"},
         "email": {"type": "string",
                   "format": "email",
                   "pattern": "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$"},
